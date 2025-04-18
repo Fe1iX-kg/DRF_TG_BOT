@@ -24,7 +24,11 @@ def start(update, context):
                              "/remove_course - Удалить курс у студента\n"
                              "/set_group - Назначить группу студенту\n"
                              "/list_students - Показать список студентов\n"
+                             "/list_groups - Показать список групп\n"
+                             "/list_courses - Показать список курсов\n"
                              "/cancel - Отменить действие")
+
+
 def create_student(update, context):
     update.message.reply_text("Введите имя и фамилию студента (например, John Doe):")
     return CREATE_STUDENT_NAME
@@ -264,6 +268,169 @@ def list_students(update, context):
     else:
         update.message.reply_text(message)
 
+    def list_groups(update, context):
+        groups = Group.objects.all()
+        if not groups:
+            update.message.reply_text("Список групп пуст.")
+            return
+
+        message = "📋 Список групп:\n\n"
+        for group in groups:
+            student_count = group.students.count()
+            message += (f"ID: {group.id}\n"
+                        f"Название: {group.name}\n"
+                        f"Студентов: {student_count}\n"
+                        f"{'-' * 20}\n")
+
+        # Разбиваем сообщение, если оно длиннее 4096 символов
+        if len(message) > 4096:
+            parts = []
+            current_part = "📋 Список групп (часть {}):\n\n"
+            part_number = 1
+            lines = message.split('\n')
+            current_lines = []
+            current_length = len(current_part.format(part_number))
+
+            for line in lines:
+                if current_length + len(line) + 1 > 4096:
+                    parts.append(current_part.format(part_number) + '\n'.join(current_lines))
+                    part_number += 1
+                    current_lines = [line]
+                    current_length = len(current_part.format(part_number)) + len(line) + 1
+                else:
+                    current_lines.append(line)
+                    current_length += len(line) + 1
+
+            if current_lines:
+                parts.append(current_part.format(part_number) + '\n'.join(current_lines))
+
+            for part in parts:
+                update.message.reply_text(part)
+        else:
+            update.message.reply_text(message)
+
+    def list_courses(update, context):
+        courses = Course.objects.all()
+        if not courses:
+            update.message.reply_text("Список курсов пуст.")
+            return
+
+        message = "📋 Список курсов:\n\n"
+        for course in courses:
+            student_count = course.students.count()
+            message += (f"ID: {course.id}\n"
+                        f"Название: {course.name}\n"
+                        f"Студентов: {student_count}\n"
+                        f"{'-' * 20}\n")
+
+        # Разбиваем сообщение, если оно длиннее 4096 символов
+        if len(message) > 4096:
+            parts = []
+            current_part = "📋 Список курсов (часть {}):\n\n"
+            part_number = 1
+            lines = message.split('\n')
+            current_lines = []
+            current_length = len(current_part.format(part_number))
+
+            for line in lines:
+                if current_length + len(line) + 1 > 4096:
+                    parts.append(current_part.format(part_number) + '\n'.join(current_lines))
+                    part_number += 1
+                    current_lines = [line]
+                    current_length = len(current_part.format(part_number)) + len(line) + 1
+                else:
+                    current_lines.append(line)
+                    current_length += len(line) + 1
+
+            if current_lines:
+                parts.append(current_part.format(part_number) + '\n'.join(current_lines))
+
+            for part in parts:
+                update.message.reply_text(part)
+        else:
+            update.message.reply_text(message)
+def list_groups(update, context):
+    groups = Group.objects.all()
+    if not groups:
+        update.message.reply_text("Список групп пуст.")
+        return
+
+    message = "📋 Список групп:\n\n"
+    for group in groups:
+        student_count = group.students.count()
+        message += (f"ID: {group.id}\n"
+                   f"Название: {group.name}\n"
+                   f"Студентов: {student_count}\n"
+                   f"{'-' * 20}\n")
+
+    # Разбиваем сообщение, если оно длиннее 4096 символов
+    if len(message) > 4096:
+        parts = []
+        current_part = "📋 Список групп (часть {}):\n\n"
+        part_number = 1
+        lines = message.split('\n')
+        current_lines = []
+        current_length = len(current_part.format(part_number))
+
+        for line in lines:
+            if current_length + len(line) + 1 > 4096:
+                parts.append(current_part.format(part_number) + '\n'.join(current_lines))
+                part_number += 1
+                current_lines = [line]
+                current_length = len(current_part.format(part_number)) + len(line) + 1
+            else:
+                current_lines.append(line)
+                current_length += len(line) + 1
+
+        if current_lines:
+            parts.append(current_part.format(part_number) + '\n'.join(current_lines))
+
+        for part in parts:
+            update.message.reply_text(part)
+    else:
+        update.message.reply_text(message)
+
+def list_courses(update, context):
+    courses = Course.objects.all()
+    if not courses:
+        update.message.reply_text("Список курсов пуст.")
+        return
+
+    message = "📋 Список курсов:\n\n"
+    for course in courses:
+        student_count = course.students.count()
+        message += (f"ID: {course.id}\n"
+                   f"Название: {course.name}\n"
+                   f"Студентов: {student_count}\n"
+                   f"{'-' * 20}\n")
+
+    # Разбиваем сообщение, если оно длиннее 4096 символов
+    if len(message) > 4096:
+        parts = []
+        current_part = "📋 Список курсов (часть {}):\n\n"
+        part_number = 1
+        lines = message.split('\n')
+        current_lines = []
+        current_length = len(current_part.format(part_number))
+
+        for line in lines:
+            if current_length + len(line) + 1 > 4096:
+                parts.append(current_part.format(part_number) + '\n'.join(current_lines))
+                part_number += 1
+                current_lines = [line]
+                current_length = len(current_part.format(part_number)) + len(line) + 1
+            else:
+                current_lines.append(line)
+                current_length += len(line) + 1
+
+        if current_lines:
+            parts.append(current_part.format(part_number) + '\n'.join(current_lines))
+
+        for part in parts:
+            update.message.reply_text(part)
+    else:
+        update.message.reply_text(message)
+
 def main():
     updater = Updater(settings.TELEGRAM_BOT_TOKEN, use_context=True)
     dp = updater.dispatcher
@@ -356,7 +523,9 @@ def main():
     dp.add_handler(add_course_conv)
     dp.add_handler(remove_course_conv)
     dp.add_handler(set_group_conv)
-    dp.add_handler(CommandHandler("list_students", list_students))  # Новая команда
+    dp.add_handler(CommandHandler("list_students", list_students))
+    dp.add_handler(CommandHandler("list_groups", list_groups))  # Новая команда
+    dp.add_handler(CommandHandler("list_courses", list_courses))  # Новая команда
     dp.add_error_handler(error)
 
     # Запуск бота
